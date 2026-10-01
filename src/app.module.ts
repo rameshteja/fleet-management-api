@@ -9,6 +9,9 @@ import databaseConfig from './config/database.config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
+import { GroupsModule } from './groups/groups.module';
+import { RolesModule } from './roles/roles.module';
+import { PermissionsModule } from './permissions/permissions.module';
 import jwtConfig from './config/jwt.config';
 
 @Module({
@@ -16,11 +19,7 @@ import jwtConfig from './config/jwt.config';
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
-      load: [
-        configuration,
-        databaseConfig,
-        jwtConfig
-      ]
+      load: [configuration, databaseConfig, jwtConfig],
     }),
 
     TypeOrmModule.forRootAsync({
@@ -37,25 +36,25 @@ import jwtConfig from './config/jwt.config';
           database: configService.get<string>('database.database'),
           autoLoadEntities: true,
           synchronize: configService.get<boolean>('database.synchronize'),
-          logging: configService.get<boolean>('database.logging')
+          logging: configService.get<boolean>('database.logging'),
         };
       },
     }),
 
     ServeStaticModule.forRoot({
-      rootPath: join(
-        process.cwd(),
-        'uploads',
-      ),
+      rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
 
     UsersModule,
     AuthModule,
+    GroupsModule,
+    RolesModule,
+    PermissionsModule,
   ],
 
   controllers: [AppController],
 
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,8 +1,11 @@
+import { GroupEntity } from '../../groups/entities/group.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -100,6 +103,15 @@ export class UserEntity {
     type: 'uuid',
   })
   groupId: string;
+
+  @ManyToOne(() => GroupEntity, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({
+    name: 'group_id',
+  })
+  group: GroupEntity;
 
   @Column({
     name: 'is_email_verified',

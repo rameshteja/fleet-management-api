@@ -1,11 +1,21 @@
-import { IsDateString, IsEnum, IsOptional, isString, IsString, maxLength, MaxLength, min, MinLength } from "class-validator";
-import { Gender } from "../entities/user.entity";
+import {
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  isString,
+  IsString,
+  maxLength,
+  MaxLength,
+  min,
+  MinLength,
+} from 'class-validator';
+import { Gender } from '../entities/user.entity';
 
 export class CreateUserDto {
   @IsString()
   @MinLength(2)
   @MaxLength(100)
-  firstName: string
+  firstName: string;
 
   @IsString()
   @MinLength(2)
@@ -18,16 +28,16 @@ export class CreateUserDto {
   userName: string;
   @IsString()
   @MaxLength(150)
-  email: string
+  email: string;
 
   @IsString()
   @MinLength(8)
   @MaxLength(100)
-  password: string
+  password: string;
 
   @IsOptional()
   @IsEnum(Gender)
-  gender?: Gender
+  gender?: Gender;
 
   @IsOptional()
   @IsString()
@@ -58,5 +68,4 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   countryId?: string;
-
 }

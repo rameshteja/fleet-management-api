@@ -1,9 +1,13 @@
-import { createParamDecorator, ExecutionContext, UnauthorizedException } from "@nestjs/common";
+import {
+  createParamDecorator,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 export interface AuthenticatedUser {
-  id: string,
-  email: string,
-  groupId: string
+  id: string;
+  email: string;
+  groupId: string;
 }
 
 export const CurrentUser = createParamDecorator(
@@ -16,5 +20,5 @@ export const CurrentUser = createParamDecorator(
 
     const user = request.user as AuthenticatedUser;
     return data ? user?.[data] : user;
-  }
+  },
 );

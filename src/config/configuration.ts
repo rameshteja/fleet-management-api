@@ -1,4 +1,4 @@
-import { registerAs } from "@nestjs/config";
+import { registerAs } from '@nestjs/config';
 
 export default registerAs('app', () => ({
   name: process.env.APP_NAME || 'Fleet Management API',
@@ -6,4 +6,4 @@ export default registerAs('app', () => ({
   port: parseInt(process.env.APP_PORT || '3000', 10),
   apiPrefix: process.env.API_PREFIX || 'api',
   apiVersion: process.env.API_VERSION || 'v1',
-}))
+}));

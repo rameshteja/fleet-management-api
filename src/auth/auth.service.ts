@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -11,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 
 import { JwtService } from '@nestjs/jwt';
 
-import { UserEntity, UserStatus, } from '../users/entities/user.entity';
+import { UserEntity, UserStatus } from '../users/entities/user.entity';
 
 import { LoginDto } from './dto/login.dto';
 
@@ -19,44 +16,28 @@ import { LoginDto } from './dto/login.dto';
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository:
-      Repository<UserEntity>,
+    private readonly userRepository: Repository<UserEntity>,
 
-    private readonly jwtService:
-      JwtService,
-  ) { }
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async login(
-    dto: LoginDto,
-  ) {
-    const user =
-      await this.userRepository
-        .createQueryBuilder('user')
-        .addSelect('user.password')
-        .where(
-          'LOWER(user.email) = LOWER(:email)',
-          {
-            email: dto.email,
-          },
-        )
-        .getOne();
+  async login(dto: LoginDto) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('LOWER(user.email) = LOWER(:email)', {
+        email: dto.email,
+      })
+      .getOne();
 
     if (!user) {
-      throw new UnauthorizedException(
-        'Invalid email or password.',
-      );
+      throw new UnauthorizedException('Invalid email or password.');
     }
 
-    const passwordValid =
-      await bcrypt.compare(
-        dto.password,
-        user.password,
-      );
+    const passwordValid = await bcrypt.compare(dto.password, user.password);
 
     if (!passwordValid) {
-      throw new UnauthorizedException(
-        'Invalid email or password.',
-      );
+      throw new UnauthorizedException('Invalid email or password.');
     }
 
     // if (
@@ -73,10 +54,7 @@ export class AuthService {
       groupId: user.groupId,
     };
 
-    const accessToken =
-      await this.jwtService.signAsync(
-        payload,
-      );
+    const accessToken = await this.jwtService.signAsync(payload);
 
     return {
       data: {

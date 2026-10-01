@@ -32,22 +32,23 @@ import {
   CurrentUser,
   AuthenticatedUser,
 } from 'src/common/decorators/current-user.decorator';
+import { PermissionGuard } from 'src/auth/guards/permission.guard';
+import { Permissions } from 'src/common/decorators/permissions.decorator';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionGuard)
 export class UsersController {
-
-  constructor(
-    private readonly userService: UsersService,
-  ) { }
+  constructor(private readonly userService: UsersService) { }
 
   @Get()
+  @Permissions('USER_VIEW')
   @ApiResponseMessage('Users fetched successfully.')
   async findAll(@Query() paginationDto: PaginationDto) {
     return this.userService.findAll(paginationDto);
   }
 
   @Get(':id')
+  @Permissions('USER_VIEW')
   @ApiResponseMessage('User fetched successfully.')
   async findById(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -56,6 +57,7 @@ export class UsersController {
   }
 
   @Post()
+  @Permissions('USER_CREATE')
   @HttpCode(HttpStatus.CREATED)
   @ApiResponseMessage('User created successfully.')
   async create(
@@ -66,6 +68,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @Permissions('USER_UPDATE')
   @ApiResponseMessage('User updated successfully.')
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -76,6 +79,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Permissions('USER_DELETE')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponseMessage('User deleted successfully.')
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
@@ -101,10 +105,7 @@ export class UsersController {
     )
     file: Express.Multer.File,
   ) {
-    return this.userService.uploadProfileImage(
-      id,
-      file,
-    );
+    return this.userService.uploadProfileImage(id, file);
   }
 
   @Get('profile/me')
@@ -115,5 +116,4 @@ export class UsersController {
   ): Promise<UserEntity | null> {
     return this.userService.getCurrentUser(id);
   }
-
 }

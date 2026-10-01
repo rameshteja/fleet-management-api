@@ -15,13 +15,11 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true
-    })
-  )
-  const reflector = app.get(Reflector);
-  app.useGlobalInterceptors(
-    new ResponseInterceptor(reflector),
+      transform: true,
+    }),
   );
+  const reflector = app.get(Reflector);
+  app.useGlobalInterceptors(new ResponseInterceptor(reflector));
   app.useGlobalFilters(new HttpExceptionFilter());
   const port = configService.get<number>('app.port', 3000);
   await app.listen(port);

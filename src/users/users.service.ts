@@ -1,4 +1,9 @@
-import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -17,15 +22,12 @@ export class UsersService {
     private readonly userRepository: Repository<UserEntity>,
     @Inject('STORAGE_SERVICE')
     private readonly storageService: StorageService,
-  ) { }
+  ) {}
 
   async findAll(paginationDto: PaginationDto) {
     const { page, limit } = paginationDto;
     const skip = (page - 1) * limit;
-    const [
-      users,
-      totalRecords,
-    ] = await this.userRepository.findAndCount({
+    const [users, totalRecords] = await this.userRepository.findAndCount({
       skip,
       take: limit,
       order: {
@@ -33,26 +35,24 @@ export class UsersService {
       },
     });
 
-    const metadata = calculatePagination(
-      page,
-      limit,
-      totalRecords,
-    );
+    const metadata = calculatePagination(page, limit, totalRecords);
 
     return {
       data: users,
       metadata,
     };
-
   }
 
   async findById(id: string): Promise<UserEntity | null> {
     return this.userRepository.findOne({
-      where: { id }
-    })
+      where: { id },
+    });
   }
 
-  async create(createUserDto: CreateUserDto, createdBy: string): Promise<UserEntity> {
+  async create(
+    createUserDto: CreateUserDto,
+    createdBy: string,
+  ): Promise<UserEntity> {
     const { groupId, ...userData } = createUserDto;
     const existingUser = await this.userRepository.findOne({
       where: [
@@ -64,12 +64,10 @@ export class UsersService {
         },
       ],
       withDeleted: true,
-    })
+    });
 
     if (existingUser) {
-      throw new ConflictException(
-        'Email or username already exists.',
-      );
+      throw new ConflictException('Email or username already exists.');
     }
     const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
     const user = this.userRepository.create({
@@ -77,7 +75,6 @@ export class UsersService {
       email: createUserDto.email.toLocaleLowerCase(),
       password: hashedPassword,
       createdBy: createdBy,
-
     });
 
     return this.userRepository.save(user);
@@ -85,7 +82,7 @@ export class UsersService {
 
   async update(id: string, dto: UpdateUserDto, updatedBy: string) {
     const user = await this.userRepository.findOne({
-      where: { id }
+      where: { id },
     });
     if (!user) {
       throw new NotFoundException('user not found.');
@@ -113,8 +110,8 @@ export class UsersService {
       ...dto,
       ...(dto.email
         ? {
-          email: dto.email.toLowerCase(),
-        }
+            email: dto.email.toLowerCase(),
+          }
         : {}),
       updatedBy,
     });
@@ -122,15 +119,12 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<void> {
-    const user =
-      await this.userRepository.findOne({
-        where: { id },
-      });
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
 
     if (!user) {
-      throw new NotFoundException(
-        'User not found.',
-      );
+      throw new NotFoundException('User not found.');
     }
 
     await this.userRepository.softDelete(id);
@@ -147,28 +141,19 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new NotFoundException(
-        'User not found.',
-      );
+      throw new NotFoundException('User not found.');
     }
 
     const oldProfileImage = user.profileImage;
 
-    const newProfileImage =
-      await this.storageService.upload(
-        file,
-        'users',
-      );
+    const newProfileImage = await this.storageService.upload(file, 'users');
 
     user.profileImage = newProfileImage;
 
-    const updatedUser =
-      await this.userRepository.save(user);
+    const updatedUser = await this.userRepository.save(user);
 
     if (oldProfileImage) {
-      await this.storageService.delete(
-        oldProfileImage,
-      );
+      await this.storageService.delete(oldProfileImage);
     }
 
     return updatedUser;
@@ -176,8 +161,8 @@ export class UsersService {
 
   async getCurrentUser(id: string) {
     const user = await this.userRepository.findOne({
-      where: { id }
-    })
+      where: { id },
+    });
 
     if (!user) {
       throw new NotFoundException('User not found.');

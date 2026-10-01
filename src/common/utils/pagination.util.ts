@@ -17,24 +17,13 @@ export function calculatePagination(
     };
   }
 
-  const totalPages = Math.ceil(
-    totalRecords / limit,
-  );
+  const totalPages = Math.ceil(totalRecords / limit);
 
-  const currentPage = Math.min(
-    page,
-    totalPages,
-  );
+  const currentPage = Math.min(page, totalPages);
 
-  const previousPage =
-    currentPage > 1
-      ? currentPage - 1
-      : null;
+  const previousPage = currentPage > 1 ? currentPage - 1 : null;
 
-  const nextPage =
-    currentPage < totalPages
-      ? currentPage + 1
-      : null;
+  const nextPage = currentPage < totalPages ? currentPage + 1 : null;
 
   return {
     currentPage,

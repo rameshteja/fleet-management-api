@@ -14,9 +14,7 @@ import { UserEntity } from '../users/entities/user.entity';
   imports: [
     ConfigModule,
 
-    TypeOrmModule.forFeature([
-      UserEntity,
-    ]),
+    TypeOrmModule.forFeature([UserEntity]),
 
     PassportModule,
 
@@ -25,23 +23,13 @@ import { UserEntity } from '../users/entities/user.entity';
 
       inject: [ConfigService],
 
-      useFactory: (
-        configService: ConfigService,
-      ) => {
-        const secret =
-          configService.get<string>(
-            'jwt.secret',
-          );
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('jwt.secret');
 
-        const expiresIn =
-          configService.get<string>(
-            'jwt.expiresIn',
-          ) || '1h';
+        const expiresIn = configService.get<string>('jwt.expiresIn') || '1h';
 
         if (!secret) {
-          throw new Error(
-            'JWT_SECRET is not configured.',
-          );
+          throw new Error('JWT_SECRET is not configured.');
         }
 
         return {
@@ -54,17 +42,10 @@ import { UserEntity } from '../users/entities/user.entity';
     }),
   ],
 
-  controllers: [
-    AuthController,
-  ],
+  controllers: [AuthController],
 
-  providers: [
-    AuthService,
-    JwtStrategy,
-  ],
+  providers: [AuthService, JwtStrategy],
 
-  exports: [
-    AuthService,
-  ],
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

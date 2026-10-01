@@ -14,13 +14,9 @@ export const AppDataSource = new DataSource({
 
   database: process.env.DB_DATABASE || 'fleet_management',
 
-  entities: [
-    'src/**/*.entity.ts',
-  ],
+  entities: ['src/**/*.entity.ts'],
 
-  migrations: [
-    'src/database/migrations/*.ts',
-  ],
+  migrations: ['src/database/migrations/*.ts'],
 
   synchronize: false,
 });
