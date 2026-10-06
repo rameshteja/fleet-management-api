@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PermissionEntity } from './entities/permission.entity';
@@ -10,7 +14,7 @@ export class PermissionsService {
   constructor(
     @InjectRepository(PermissionEntity)
     private readonly permissionRepository: Repository<PermissionEntity>,
-  ) { }
+  ) {}
 
   async create(dto: CreatePermissionDto): Promise<PermissionEntity> {
     const code = dto.code.trim().toUpperCase();
@@ -21,7 +25,7 @@ export class PermissionsService {
     const permission = this.permissionRepository.create({
       ...dto,
       name: dto.name.trim(),
-      code
+      code,
     });
     return await this.permissionRepository.save(permission);
   }
@@ -29,16 +33,16 @@ export class PermissionsService {
   async findAll(): Promise<PermissionEntity[]> {
     return this.permissionRepository.find({
       order: {
-        name: 'ASC'
-      }
+        name: 'ASC',
+      },
     });
   }
 
   async findOne(id: string): Promise<PermissionEntity> {
     const permission = await this.permissionRepository.findOne({
       where: {
-        id
-      }
+        id,
+      },
     });
     if (!permission) {
       throw new NotFoundException('Permission not found.');
@@ -46,15 +50,18 @@ export class PermissionsService {
     return permission;
   }
 
-  async update(id: string, dto: UpdatePermissionDto): Promise<PermissionEntity> {
+  async update(
+    id: string,
+    dto: UpdatePermissionDto,
+  ): Promise<PermissionEntity> {
     const permission = await this.findOne(id);
 
     if (dto.code && dto.code.trim().toUpperCase() !== permission.code) {
       const code = dto.code.trim().toUpperCase();
       const existing = await this.permissionRepository.findOne({
         where: {
-          code
-        }
+          code,
+        },
       });
       if (existing && existing.id != id) {
         throw new ConflictException('Permission code already exists');
@@ -72,7 +79,7 @@ export class PermissionsService {
   }
 
   async remove(id: string): Promise<void> {
-    const permission = await this.findOne(id);
+    await this.findOne(id);
     await this.permissionRepository.delete({ id });
   }
 }

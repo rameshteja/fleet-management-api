@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
 import { ApiResponseMessage } from 'src/common/decorators/api-response.decorator';
 import { CreatePermissionDto } from './dto/create-permission.dto';
@@ -10,9 +20,7 @@ import { PermissionGuard } from 'src/auth/guards/permission.guard';
 @Controller('permissions')
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class PermissionsController {
-  constructor(
-    private readonly permissionService: PermissionsService
-  ) { }
+  constructor(private readonly permissionService: PermissionsService) {}
 
   @Post()
   @Permissions('PERMISSION_CREATE')
@@ -40,7 +48,7 @@ export class PermissionsController {
   @ApiResponseMessage('Permission updated successfully.')
   async udpate(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() dto: UpdatePermissionDto
+    @Body() dto: UpdatePermissionDto,
   ) {
     return this.permissionService.update(id, dto);
   }
@@ -52,7 +60,7 @@ export class PermissionsController {
     await this.permissionService.remove(id);
     return {
       data: null,
-      metadata: []
+      metadata: [],
     };
   }
 }

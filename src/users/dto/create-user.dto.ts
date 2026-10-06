@@ -2,11 +2,8 @@ import {
   IsDateString,
   IsEnum,
   IsOptional,
-  isString,
   IsString,
-  maxLength,
   MaxLength,
-  min,
   MinLength,
 } from 'class-validator';
 import { Gender } from '../entities/user.entity';

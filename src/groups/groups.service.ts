@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GroupCode, GroupEntity } from './entities/group.entity';
 import { In, Repository } from 'typeorm';
@@ -17,15 +21,15 @@ export class GroupsService {
     private readonly RoleRepository: Repository<RoleEntity>,
 
     @InjectRepository(GroupRoleEntity)
-    private readonly groupRoleRepository: Repository<GroupRoleEntity>
-  ) { }
+    private readonly groupRoleRepository: Repository<GroupRoleEntity>,
+  ) {}
 
   async create(dto: CreateGroupDto): Promise<GroupEntity> {
     const code = dto.code.trim().toUpperCase() as GroupCode;
     const exists = await this.groupRepository.findOne({
       where: {
-        code
-      }
+        code,
+      },
     });
     if (exists) {
       throw new ConflictException('Group code already exists.');
@@ -33,15 +37,15 @@ export class GroupsService {
     const group = this.groupRepository.create({
       ...dto,
       name: dto.name.trim(),
-      code
+      code,
     });
     return await this.groupRepository.save(group);
   }
   async findAll(): Promise<GroupEntity[]> {
     return await this.groupRepository.find({
       order: {
-        name: 'ASC'
-      }
+        name: 'ASC',
+      },
     });
   }
   async findOne(id: string): Promise<GroupEntity> {
@@ -54,10 +58,10 @@ export class GroupsService {
 
   async update(id: string, dto: UpdateGroupDto) {
     const group = await this.findOne(id);
-    if (dto.code && dto.code.trim() !== group.code) {
+    if (dto.code && (dto.code.trim() as GroupCode) !== group.code) {
       const code = dto.code.trim() as GroupCode;
       const exists = await this.groupRepository.findOne({
-        where: { code }
+        where: { code },
       });
       if (exists && exists.id !== id) {
         throw new ConflictException('Group code already exists');
@@ -68,7 +72,7 @@ export class GroupsService {
       group.name = dto.name.trim();
     }
     if (dto.description?.trim() !== undefined) {
-      group.description = dto.description.trim()
+      group.description = dto.description.trim();
     }
     await this.groupRepository.save(group);
   }
@@ -82,18 +86,19 @@ export class GroupsService {
     await this.findOne(groupId);
     const roles = await this.RoleRepository.find({
       where: {
-        id: In(roleIds)
-      }
+        id: In(roleIds),
+      },
     });
     if (roles.length !== roleIds.length) {
       throw new NotFoundException('One or more roles were not found.');
     }
     await this.groupRoleRepository.delete({ groupId });
-    const mappings = roleIds.map(
-      (roleId) => this.groupRoleRepository.create({
+    const mappings = roleIds.map((roleId) =>
+      this.groupRoleRepository.create({
         groupId,
-        roleId
-      }));
+        roleId,
+      }),
+    );
     await this.groupRoleRepository.save(mappings);
   }
 
@@ -101,14 +106,14 @@ export class GroupsService {
     await this.findOne(groupId);
     return this.groupRoleRepository.find({
       where: {
-        groupId
+        groupId,
       },
       relations: {
-        role: true
+        role: true,
       },
       order: {
-        createdAt: 'ASC'
-      }
+        createdAt: 'ASC',
+      },
     });
   }
 }

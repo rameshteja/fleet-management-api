@@ -25,7 +25,7 @@ export class LocalStorageService implements StorageService {
       await writeFile(filePath, file.buffer);
 
       return `/uploads/${folder}/${fileName}`;
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException('Failed to upload file.');
     }
   }
@@ -41,9 +41,10 @@ export class LocalStorageService implements StorageService {
       const fullPath = join(this.uploadRoot, relativePath);
 
       await unlink(fullPath);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // File may already be deleted.
-      if (error?.code !== 'ENOENT') {
+      const nodeError = error as NodeJS.ErrnoException;
+      if (nodeError?.code !== 'ENOENT') {
         throw new InternalServerErrorException('Failed to delete file.');
       }
     }

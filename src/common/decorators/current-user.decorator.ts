@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 export interface AuthenticatedUser {
   id: string;
@@ -10,15 +11,19 @@ export interface AuthenticatedUser {
   groupId: string;
 }
 
+interface RequestWithUser extends Request {
+  user?: AuthenticatedUser;
+}
+
 export const CurrentUser = createParamDecorator(
   (data: keyof AuthenticatedUser | undefined, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
+    const request = ctx.switchToHttp().getRequest<RequestWithUser>();
 
     if (!request.user) {
       throw new UnauthorizedException();
     }
 
-    const user = request.user as AuthenticatedUser;
-    return data ? user?.[data] : user;
+    const user = request.user;
+    return data ? user[data] : user;
   },
 );

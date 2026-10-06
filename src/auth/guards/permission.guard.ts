@@ -11,7 +11,12 @@ import { AuthorizationService } from '../authorization.service';
 
 import { PERMISSIONS_KEY } from '../../common/decorators/permissions.decorator';
 
+import { Request } from 'express';
 import { AuthenticatedUser } from '../../common/decorators/current-user.decorator';
+
+interface RequestWithUser extends Request {
+  user?: AuthenticatedUser;
+}
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -33,9 +38,9 @@ export class PermissionGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<RequestWithUser>();
 
-    const user = request.user as AuthenticatedUser;
+    const user = request.user;
 
     if (!user?.id || !user?.groupId) {
       throw new ForbiddenException(

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner, TableIndex } from 'typeorm';
 
 export class CreatePermissions1790733701187 implements MigrationInterface {
   name = 'CreatePermissions1790733701187';
@@ -10,9 +10,19 @@ export class CreatePermissions1790733701187 implements MigrationInterface {
     await queryRunner.query(
       `CREATE TABLE "permissions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(100) NOT NULL, "code" character varying(100) NOT NULL, "description" text, "status" "public"."permissions_status_enum" NOT NULL DEFAULT 'ACTIVE', "create_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "update_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "delete_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "UQ_8dad765629e83229da6feda1c1d" UNIQUE ("code"), CONSTRAINT "PK_920331560282b8bd21bb02290df" PRIMARY KEY ("id"))`,
     );
+
+    await queryRunner.createIndex(
+      'permissions',
+      new TableIndex({
+        name: 'IDX_permissions_code',
+        columnNames: ['code'],
+        isUnique: true,
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropIndex('permissions', 'IDX_permissions_code');
     await queryRunner.query(`DROP TABLE "permissions"`);
     await queryRunner.query(`DROP TYPE "public"."permissions_status_enum"`);
   }

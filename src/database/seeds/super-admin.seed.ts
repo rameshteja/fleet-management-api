@@ -3,10 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { DataSource } from 'typeorm';
 
 import { UserEntity, UserStatus } from '../../users/entities/user.entity';
-import {
-  GroupEntity,
-  GroupCode,
-} from '../../groups/entities/group.entity';
+import { GroupEntity, GroupCode } from '../../groups/entities/group.entity';
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -18,9 +15,7 @@ const dataSource = new DataSource({
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_DATABASE || 'fleet_management',
 
-  entities: [
-    'src/**/*.entity.ts',
-  ],
+  entities: ['src/**/*.entity.ts'],
 
   synchronize: false,
 });
@@ -28,11 +23,9 @@ const dataSource = new DataSource({
 async function seed() {
   await dataSource.initialize();
 
-  const groupRepository =
-    dataSource.getRepository(GroupEntity);
+  const groupRepository = dataSource.getRepository(GroupEntity);
 
-  const userRepository =
-    dataSource.getRepository(UserEntity);
+  const userRepository = dataSource.getRepository(UserEntity);
 
   const group = await groupRepository.findOne({
     where: {
@@ -48,17 +41,14 @@ async function seed() {
 
   const email = 'admin@fleetmanagement.com';
 
-  const existingUser =
-    await userRepository.findOne({
-      where: {
-        email,
-      },
-    });
+  const existingUser = await userRepository.findOne({
+    where: {
+      email,
+    },
+  });
 
   if (existingUser) {
-    console.log(
-      `Super Admin already exists: ${email}`,
-    );
+    console.log(`Super Admin already exists: ${email}`);
 
     await dataSource.destroy();
     return;
@@ -67,8 +57,7 @@ async function seed() {
   const password = 'Admin@12345';
   const phoneNumber = '+1234567890';
 
-  const hashedPassword =
-    await bcrypt.hash(password, 12);
+  const hashedPassword = await bcrypt.hash(password, 12);
 
   const user = userRepository.create({
     firstName: 'Super',

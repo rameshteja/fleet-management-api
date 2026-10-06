@@ -8,13 +8,16 @@ import { PermissionEntity } from 'src/permissions/entities/permission.entity';
 import { AuthorizationModule } from 'src/auth/authorization.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([
-    RoleEntity,
-    RolePermissionEntity,
-    PermissionEntity
-  ]), AuthorizationModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      RoleEntity,
+      RolePermissionEntity,
+      PermissionEntity,
+    ]),
+    AuthorizationModule,
+  ],
   controllers: [RolesController],
   providers: [RolesService],
   exports: [RolesService],
 })
-export class RolesModule { }
+export class RolesModule {}

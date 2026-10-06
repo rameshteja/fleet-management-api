@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner, TableIndex } from 'typeorm';
 
 export class CreateRbacMappings1790735376160 implements MigrationInterface {
   name = 'CreateRbacMappings1790735376160';
@@ -21,6 +21,38 @@ export class CreateRbacMappings1790735376160 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "group_roles" ADD CONSTRAINT "FK_35d4b5f7da6e1a9a730c3621ecc" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+
+    await queryRunner.createIndex(
+      'group_roles',
+      new TableIndex({
+        name: 'IDX_group_roles_group_id',
+        columnNames: ['group_id'],
+      }),
+    );
+
+    await queryRunner.createIndex(
+      'group_roles',
+      new TableIndex({
+        name: 'IDX_group_roles_role_id',
+        columnNames: ['role_id'],
+      }),
+    );
+
+    await queryRunner.createIndex(
+      'role_permissions',
+      new TableIndex({
+        name: 'IDX_role_permissions_role_id',
+        columnNames: ['role_id'],
+      }),
+    );
+
+    await queryRunner.createIndex(
+      'role_permissions',
+      new TableIndex({
+        name: 'IDX_role_permissions_permission_id',
+        columnNames: ['permission_id'],
+      }),
     );
   }
 

@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { promises } from 'dns';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { calculatePagination } from 'src/common/utils/pagination.util';
 import * as bcrypt from 'bcrypt';
@@ -53,7 +52,6 @@ export class UsersService {
     createUserDto: CreateUserDto,
     createdBy: string,
   ): Promise<UserEntity> {
-    const { groupId, ...userData } = createUserDto;
     const existingUser = await this.userRepository.findOne({
       where: [
         {

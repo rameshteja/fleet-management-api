@@ -21,24 +21,18 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
 import { UserEntity } from './entities/user.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import {
-  API_RESPONSE_MESSAGE,
-  ApiResponseMessage,
-} from 'src/common/decorators/api-response.decorator';
+import { ApiResponseMessage } from 'src/common/decorators/api-response.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import {
-  CurrentUser,
-  AuthenticatedUser,
-} from 'src/common/decorators/current-user.decorator';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { PermissionGuard } from 'src/auth/guards/permission.guard';
 import { Permissions } from 'src/common/decorators/permissions.decorator';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class UsersController {
-  constructor(private readonly userService: UsersService) { }
+  constructor(private readonly userService: UsersService) {}
 
   @Get()
   @Permissions('USER_VIEW')

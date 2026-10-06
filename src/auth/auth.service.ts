@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 
 import { JwtService } from '@nestjs/jwt';
 
-import { UserEntity, UserStatus } from '../users/entities/user.entity';
+import { UserEntity } from '../users/entities/user.entity';
 
 import { LoginDto } from './dto/login.dto';
 

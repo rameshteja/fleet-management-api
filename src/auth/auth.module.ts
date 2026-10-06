@@ -35,7 +35,8 @@ import { UserEntity } from '../users/entities/user.entity';
         return {
           secret,
           signOptions: {
-            expiresIn: expiresIn as any,
+            expiresIn:
+              expiresIn as import('jsonwebtoken').SignOptions['expiresIn'],
           },
         };
       },

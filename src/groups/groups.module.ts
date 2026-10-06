@@ -3,19 +3,17 @@ import { GroupsController } from './groups.controller';
 import { GroupsService } from './groups.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GroupEntity } from './entities/group.entity';
-import { AuthModule } from '../auth/auth.module';
 import { GroupRoleEntity } from './entities/group-role.entity';
 import { RoleEntity } from 'src/roles/entities/role.entity';
 import { AuthorizationModule } from 'src/auth/authorization.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([
-    GroupEntity,
-    GroupRoleEntity,
-    RoleEntity
-  ]), AuthorizationModule],
+  imports: [
+    TypeOrmModule.forFeature([GroupEntity, GroupRoleEntity, RoleEntity]),
+    AuthorizationModule,
+  ],
   controllers: [GroupsController],
   providers: [GroupsService],
   exports: [GroupsService],
 })
-export class GroupsModule { }
+export class GroupsModule {}

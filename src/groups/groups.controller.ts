@@ -1,10 +1,20 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { Permissions } from 'src/common/decorators/permissions.decorator';
 import { ApiResponseMessage } from 'src/common/decorators/api-response.decorator';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
-import { metadata } from 'reflect-metadata/no-conflict';
 import { AssignRoleDto } from './dto/assign-roles.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PermissionGuard } from 'src/auth/guards/permission.guard';
@@ -12,9 +22,7 @@ import { PermissionGuard } from 'src/auth/guards/permission.guard';
 @Controller('groups')
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class GroupsController {
-  constructor(
-    private readonly groupService: GroupsService
-  ) { }
+  constructor(private readonly groupService: GroupsService) {}
 
   @Post()
   @Permissions('GROUP_CREATE')
@@ -42,7 +50,8 @@ export class GroupsController {
   @ApiResponseMessage('Group updated suucessfully.')
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() dto: UpdateGroupDto) {
+    @Body() dto: UpdateGroupDto,
+  ) {
     return this.groupService.update(id, dto);
   }
   @Delete(':id')
@@ -52,8 +61,8 @@ export class GroupsController {
     await this.groupService.remove(id);
     return {
       data: null,
-      metadata: {}
-    }
+      metadata: {},
+    };
   }
 
   @Put(':id/roles')
@@ -61,13 +70,13 @@ export class GroupsController {
   @ApiResponseMessage('Group roles updated successfully.')
   async assignRoles(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() dto: AssignRoleDto
+    @Body() dto: AssignRoleDto,
   ) {
     await this.groupService.assignRole(id, dto.roleIds);
     return {
       data: null,
-      metadata: {}
-    }
+      metadata: {},
+    };
   }
 
   @Get(':id/roles')
